@@ -14,3 +14,10 @@ test('validate greater than', () => {
     expect(b.validate(b.greaterThan(1), 0)).toBe(false);
     expect(b.validate(b.greaterThan(1), 2)).toBe(true);
 });
+
+test('validate object', () => {
+    expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1, y: 1 })).toBe(false); // wrong type
+    expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1 })).toBe(false); // missing type
+    expect(b.validate(b.object({ x: b.number, y: b.string }), null)).toBe(false); // not an object
+    expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1, y: 'a' })).toBe(true);
+});
