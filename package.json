@@ -1,0 +1,42 @@
+{
+    "name": "@henningway/blueprint-next",
+    "version": "0.0.1",
+    "description": "Schema library for Javascript.",
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "cross-env NODE_ENV=development rollup -c",
+        "watch": "cross-env NODE_ENV=development rollup -c -w",
+        "build": "cross-env NODE_ENV=production rollup -c",
+        "test": "jest",
+        "test:build": "npm run build && npm run test",
+        "prettier": "prettier --write .",
+        "prepare": "husky install"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/henningway/blueprint-next.git"
+    },
+    "author": "Henning Schindler <mail@henningschindler.de>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/henningway/blueprint-next/issues"
+    },
+    "homepage": "https://github.com/henningway/blueprint-next#readme",
+    "devDependencies": {
+        "cross-env": "^7.0.3",
+        "husky": "^7.0.1",
+        "jest": "^27.0.6",
+        "prettier": "^2.3.2",
+        "pretty-quick": "^3.1.1",
+        "rollup": "^2.55.1",
+        "rollup-plugin-filesize": "^9.1.1",
+        "rollup-plugin-terser": "^7.0.2"
+    },
+    "prettier": {
+        "printWidth": 120,
+        "singleQuote": true,
+        "tabWidth": 4,
+        "trailingComma": "none",
+        "vueIndentScriptAndStyle": true
+    }
+}
