@@ -1,4 +1,4 @@
-const b = require('../../dist');
+const b = require('../dist');
 
 test('validate number', () => {
     expect(b.validate(b.number, '1')).toBe(false);
@@ -41,16 +41,44 @@ test('explain', () => {
     expect(b.explain(b.number, 1)).toBe(null);
 
     expect(b.explain(b.number, '1')).toStrictEqual({
-        schema: b.number,
+        schema: 'number',
         value: '1',
-        errors: ['Type mismatch']
+        errors: [
+            {
+                type: 'TypeMismatch',
+                schema: 'number',
+                value: '1',
+                path: []
+            }
+        ]
     });
 });
 
 test.skip('explain nested', () => {
-    expect(b.explain(b.object({ x: b.number }), { x: '1' })).toStrictEqual({
-        schema: b.object({ x: b.string }),
-        value: { x: '1' },
-        errors: ['Type mismatch']
+    const schema = b.object({ x: b.number, y: b.string, z: b.object({ a: b.number }) });
+
+    expect(b.explain(schema, { x: '1', z: { a: 'a' } })).toStrictEqual({
+        schema: 'object',
+        value: { x: '1', z: { a: 'a' } },
+        errors: [
+            {
+                path: ['y'],
+                schema: 'object',
+                type: 'MissingKey',
+                value: { x: '1', z: { a: 'a' } }
+            },
+            {
+                path: ['x'],
+                schema: 'number',
+                type: 'TypeMismatch',
+                value: '1'
+            },
+            {
+                path: ['z', 'a'],
+                schema: 'number',
+                type: 'TypeMismatch',
+                value: 'a'
+            }
+        ]
     });
 });
