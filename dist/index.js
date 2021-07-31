@@ -1,1 +1,1 @@
-!function(n){"function"==typeof define&&define.amd?define(n):n()}((function(){}));
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).Blueprint=t()}(this,(function(){"use strict";return{greaterThan:e=>({validate:t=>t>e}),number:{validate:e=>"number"==typeof e},string:{validate:e=>"string"==typeof e},validate:function(e,t){return e.validate(t)}}}));
