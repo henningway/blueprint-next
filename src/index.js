@@ -25,6 +25,16 @@ const greaterThan = (right) => {
     return { name: 'greaterThan', validate };
 };
 
+const and = (...args) => {
+    const validate = (value) => {
+        return all(
+            identity,
+            map((schema) => schema.validate(value), args)
+        );
+    };
+    return { name: 'and', validate };
+};
+
 const object = (description) => {
     // list of rules in schema
     const entries = pipe(
@@ -52,6 +62,7 @@ function validate(schema, value) {
 }
 
 export default {
+    and,
     greaterThan,
     number,
     object,

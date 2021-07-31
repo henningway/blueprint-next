@@ -21,3 +21,9 @@ test('validate object', () => {
     expect(b.validate(b.object({ x: b.number, y: b.string }), null)).toBe(false); // not an object
     expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1, y: 'a' })).toBe(true);
 });
+
+test('validate with and', () => {
+    expect(b.validate(b.and(b.number, b.greaterThan(1)), 'a')).toBe(false);
+    expect(b.validate(b.and(b.number, b.greaterThan(1)), 1)).toBe(false);
+    expect(b.validate(b.and(b.number, b.greaterThan(1)), 2)).toBe(true);
+});
