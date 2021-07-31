@@ -36,3 +36,21 @@ test('validate with and', () => {
     expect(b.validate(b.and(b.number, b.greaterThan(1)), 1)).toBe(false);
     expect(b.validate(b.and(b.number, b.greaterThan(1)), 2)).toBe(true);
 });
+
+test('explain', () => {
+    expect(b.explain(b.number, 1)).toBe(null);
+
+    expect(b.explain(b.number, '1')).toStrictEqual({
+        schema: b.number,
+        value: '1',
+        errors: ['Type mismatch']
+    });
+});
+
+test.skip('explain nested', () => {
+    expect(b.explain(b.object({ x: b.number }), { x: '1' })).toStrictEqual({
+        schema: b.object({ x: b.string }),
+        value: { x: '1' },
+        errors: ['Type mismatch']
+    });
+});
