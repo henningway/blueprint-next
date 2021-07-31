@@ -1,4 +1,4 @@
-import { all, identity, map, pipe, toPairs } from 'ramda';
+import { all, difference, identity, keys, map, pipe, length, toPairs } from 'ramda';
 
 // https://github.com/sindresorhus/is-plain-obj/blob/main/index.js
 function isPlainObject(value) {
@@ -36,25 +36,37 @@ const and = (...args) => {
 };
 
 const object = (description) => {
+    let _closed = false;
+
     // list of rules in schema
-    const entries = pipe(
+    const _entries = pipe(
         toPairs,
         map((x) => ({ key: x[0], schema: x[1] }))
     )(description);
 
-    const validate = (value) => {
-        if (!isPlainObject(value)) return false;
-
+    const _validateDescription = (value) => {
         return pipe(
-            map((entry) => {
-                if (!value.hasOwnProperty(entry.key)) return false;
-                return entry.schema.validate(value[entry.key]);
-            }),
+            map((entry) => value.hasOwnProperty(entry.key) && entry.schema.validate(value[entry.key])),
             all(identity)
-        )(entries);
+        )(_entries);
     };
 
-    return { name: 'object', validate };
+    const _validateClosed = (value) => {
+        return !_closed || length(difference(keys(value), keys(description))) === 0;
+    };
+
+    const validate = (value) => {
+        return isPlainObject(value) && _validateDescription(value) && _validateClosed(value);
+    };
+
+    return {
+        name: 'object',
+        validate,
+        get closed() {
+            _closed = true;
+            return this;
+        }
+    };
 };
 
 function validate(schema, value) {

@@ -16,10 +16,19 @@ test('validate greater than', () => {
 });
 
 test('validate object', () => {
-    expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1, y: 1 })).toBe(false); // wrong type
-    expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1 })).toBe(false); // missing type
-    expect(b.validate(b.object({ x: b.number, y: b.string }), null)).toBe(false); // not an object
-    expect(b.validate(b.object({ x: b.number, y: b.string }), { x: 1, y: 'a' })).toBe(true);
+    const schema = b.object({ x: b.number, y: b.string });
+    expect(b.validate(schema, { x: 1, y: 1 })).toBe(false); // wrong type
+    expect(b.validate(schema, { x: 1 })).toBe(false); // missing type
+    expect(b.validate(schema, null)).toBe(false); // not an object
+    expect(b.validate(schema, { x: 1, y: 'a' })).toBe(true);
+});
+
+test('validate open/closed', () => {
+    const openSchema = b.object({ x: b.number, y: b.string });
+    expect(b.validate(openSchema, { x: 1, y: 'a', z: 1 })).toBe(true);
+
+    const closedSchema = b.object({ x: b.number, y: b.string }).closed;
+    expect(b.validate(closedSchema, { x: 1, y: 'a', z: 1 })).toBe(false);
 });
 
 test('validate with and', () => {
