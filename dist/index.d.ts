@@ -3,19 +3,8 @@ declare enum ErrorType {
     MissingKey = "MissingKey",
     ExtraKey = "ExtraKey"
 }
-declare type Schema = {
-    name: string;
-    validate: (value: any, path: any[]) => Error[];
-    closed?: Schema;
-};
-declare type Path = unknown[];
 declare type Description = {
-    key: Schema;
-};
-declare type Explain = {
-    schema: string;
-    value: any;
-    errors: unknown[];
+    [key: string]: Schema;
 };
 declare type Error = {
     type: ErrorType;
@@ -23,21 +12,42 @@ declare type Error = {
     value: any;
     path: Path;
 };
+declare type Explain = {
+    schema: string;
+    value: any;
+    errors: unknown[];
+};
+declare type Path = unknown[];
+declare type Schema = {
+    name: string;
+    validate: (value: any, path: any[]) => Error[];
+    closed?: Schema;
+} & Visitable & TreeNode;
+declare type SchemaVisitor = {
+    doForString: SchemaVisitorMethod;
+    doForNumber: SchemaVisitorMethod;
+    doForGreaterThan: SchemaVisitorMethod;
+    doForAnd: SchemaVisitorMethod;
+    doForObject: SchemaVisitorMethod;
+};
+declare type SchemaVisitorMethod = (schema: Schema) => any;
+declare type TreeNode = {
+    children: TreeNode[];
+};
+declare type Visitable = {
+    accept: (visitor: SchemaVisitor) => any;
+};
 declare function validate(schema: Schema, value: any): boolean;
 declare function explain(schema: Schema, value: any): Explain | null;
+declare function traverse(fn: (node: TreeNode) => any, node: TreeNode): any;
 declare const _default: {
-    and: (...args: any[]) => Schema;
+    and: (...nested: Schema[]) => Schema;
     explain: typeof explain;
     greaterThan: (right: number) => Schema;
-    number: {
-        name: string;
-        validate(value: any, path: Path): Error[];
-    };
+    number: Schema;
     object: (description: Description) => Schema;
-    string: {
-        name: string;
-        validate(value: any, path: Path): Error[];
-    };
+    string: Schema;
+    traverse: typeof traverse;
     validate: typeof validate;
 };
 export default _default;

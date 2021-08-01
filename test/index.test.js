@@ -55,7 +55,7 @@ test('explain', () => {
 });
 
 test.skip('explain nested', () => {
-    const schema = b.object({ x: b.number, y: b.string, z: b.object({ a: b.number }) });
+    const schema = b.object({ x: b.number, y: b.string, z: b.object({ zx: b.number }) });
 
     expect(b.explain(schema, { x: '1', z: { a: 'a' } })).toStrictEqual({
         schema: 'object',
@@ -74,11 +74,38 @@ test.skip('explain nested', () => {
                 value: '1'
             },
             {
-                path: ['z', 'a'],
+                path: ['z', 'zx'],
                 schema: 'number',
                 type: 'TypeMismatch',
                 value: 'a'
             }
         ]
     });
+});
+
+test('post-order traverse + visitor = transform', () => {
+    const doo = (schema) => {
+        return schema.name.toUpperCase();
+    };
+
+    const visitor = {
+        doForString: doo,
+        doForNumber: doo,
+        doForGreaterThan: doo,
+        doForAnd: doo,
+        doForObject: doo
+    };
+
+    const schema = b.object({
+        x: b.number,
+        y: b.and(b.number, b.greaterThan(0)),
+        z: b.object({ zx: b.number })
+    });
+
+    expect(b.traverse((s) => s.accept(visitor), schema)).toStrictEqual([
+        'OBJECT',
+        ['NUMBER'],
+        ['AND', ['NUMBER'], ['GREATERTHAN']],
+        ['OBJECT', ['NUMBER']]
+    ]);
 });
